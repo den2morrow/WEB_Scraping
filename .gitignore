@@ -54,6 +54,7 @@ MANIFEST
 
 ### Directory ###
 /scraping_zastavok*
+/data/imgs*
 
 
 # Installer logs
