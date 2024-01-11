@@ -32,7 +32,7 @@ def main() -> None:
     htmlik = requests.get(main_url).text
     soup = BeautifulSoup(htmlik, 'lxml')
     num_urls = soup.find('div', class_='ruler').find_all('a')[-2].text
-    urls = [main_url + f'{i}/' for i in range(int(num_urls))]
+    urls = [main_url for _ in range(int(num_urls))]
     
     print('--' * 49 + '\nStart writting urls...')
     
