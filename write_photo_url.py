@@ -36,7 +36,9 @@ def main() -> None:
     
     print('--' * 49 + '\nStart writting urls...')
     
-    get_all_urls(urls[:20])
+    start_download = int(input('Введите с какой фотографии начать скачивание (введите целое число): '))
+    end_download = int(input('Введите до какой фотографии скачивать (введите целое число): '))
+    get_all_urls(urls[start_download:end_download])
     
     print('--' * 49 + '\nFinish writting urls...')
     
