@@ -12,7 +12,8 @@ def parse_url_for_download(url) -> None:
                         .find('div', class_='block_down')\
                         .find('a').get('href')
                     
-    print(download_url)
+    with open('./data/download_urls.txt', 'a') as file:
+        file.write(download_url + '\n')
 
 
 def main() -> None:
