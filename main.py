@@ -1,7 +1,7 @@
 import time
 import requests
 from bs4 import BeautifulSoup
-
+from fake_useragent import UserAgent
 
 
 def parse_url_for_download(url) -> None:
@@ -16,8 +16,21 @@ def parse_url_for_download(url) -> None:
         file.write(download_url + '\n')
 
 
+def downloading_picture(url, name) -> None:
+    headers = {
+        'User-Agent': UserAgent().random
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code != 404:
+        img = response.content
+        
+        with open(f'./data/imgs/{name}.jpg', 'wb') as file:
+            file.write(img)
+
+
 def main() -> None:
-    parse_url_for_download(url='https://zastavok.net/funny/66615-kot_vzglyad_seryj_britanec_ispug.html')
+    url = 'https://zastavok.net/download/66819/5120x2880/'
+    downloading_picture(url=url, name='first_img')
 
 
 if __name__ == "__main__":
