@@ -29,15 +29,16 @@ def get_all_download_urls() -> list[str]:
 
 
 def parse_url_for_download(url) -> None:
-    response = requests.get(url).text
-    soup = BeautifulSoup(response, 'lxml')
-    download_url = 'https://zatavok.net' + \
-                    soup.find('div', class_='image_data')\
-                        .find('div', class_='block_down')\
-                        .find('a').get('href')
-                    
-    with open('./data/download_urls.txt', 'a') as file:
-        file.write(download_url + '\n')
+    response = requests.get(url)
+    if response.status_code != 404:
+        soup = BeautifulSoup(response.text, 'lxml')
+        download_url = 'https://zatavok.net' + \
+                        soup.find('div', class_='image_data')\
+                            .find('div', class_='block_down')\
+                            .find('a').get('href')
+                        
+        with open('./data/download_urls.txt', 'a') as file:
+            file.write(download_url + '\n')
 
 
 def downloading_picture(url, name) -> None:
