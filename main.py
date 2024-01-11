@@ -1,7 +1,31 @@
+from threading import Thread
 import time
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
+
+
+def get_all_download_urls() -> list[str]:
+    with open('./data/url_for_site_of_picture.txt', 'r') as file:
+        urls = file.read().split('\n')
+    
+    thread_list = []
+    for url in urls:
+        try:
+            thread_i = Thread(target=parse_url_for_download, args=(url,))
+            thread_list.append(thread_i)
+            thread_i.start()
+        except Exception as ex:
+            print(f'Error: {ex}')
+    
+    for th in thread_list:
+        th.join()
+    
+    # Открываем файл с ссылками на скачивание, чтобы вернуть их из функции
+    with open('./data/download_urls.txt', 'r') as file:
+        download_urls = file.read().split('\n')
+    
+    return download_urls
 
 
 def parse_url_for_download(url) -> None:
@@ -32,8 +56,7 @@ def downloading_picture(url, name) -> None:
 
 
 def main() -> None:
-    url = 'https://zastavok.net/download/66819/5120x2880/'
-    downloading_picture(url=url, name='first_img')
+    get_all_download_urls()
 
 
 if __name__ == "__main__":
