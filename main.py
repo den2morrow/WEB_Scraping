@@ -1,8 +1,22 @@
 import time
+import requests
+from bs4 import BeautifulSoup
+
+
+
+def parse_url_for_download(url) -> None:
+    response = requests.get(url).text
+    soup = BeautifulSoup(response, 'lxml')
+    download_url = 'https://zatavok.net' + \
+                    soup.find('div', class_='image_data')\
+                        .find('div', class_='block_down')\
+                        .find('a').get('href')
+                    
+    print(download_url)
 
 
 def main() -> None:
-    pass
+    parse_url_for_download(url='https://zastavok.net/funny/66615-kot_vzglyad_seryj_britanec_ispug.html')
 
 
 if __name__ == "__main__":
