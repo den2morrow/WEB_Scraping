@@ -1,4 +1,6 @@
+from concurrent.futures import ProcessPoolExecutor
 import time
+from typing import Iterator
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
@@ -12,7 +14,7 @@ def get_all_download_urls() -> None:
     
 
     thread_list = []
-    for url in urls:
+    for url in urls[:-1]:
         try:
             thread_i = Thread(target=parse_url_for_download, args=(url,))
             thread_list.append(thread_i)
@@ -20,8 +22,11 @@ def get_all_download_urls() -> None:
         except Exception as ex:
             print(f'Error: {ex}')
     
-    for th in thread_list:
-        th.join()
+    [th.join() for th in thread_list]
+    
+    with open('./data/download_urls.txt', 'r') as file:
+        all_download_urls = file.read().split('\n')[:-1]
+    return all_download_urls
 
 
 def parse_url_for_download(url: str) -> None:
@@ -37,14 +42,15 @@ def parse_url_for_download(url: str) -> None:
             file.write(download_url + '\n')
 
 
-def downloading_picture(url: str, name: str) -> None:
+def downloading_picture(url: str) -> None:
     headers = {
         'User-Agent': UserAgent().random
     }
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, verify=False)
         if response.status_code != 404:
             img = response.content
+            name = url.split('/')[-3]
             
             with open(f'./data/imgs/{name}.jpg', 'wb') as file:
                 file.write(img)
@@ -53,7 +59,9 @@ def downloading_picture(url: str, name: str) -> None:
 
 
 def main() -> None:
-    get_all_download_urls()
+    download_urls = get_all_download_urls()
+    for url in download_urls:
+        downloading_picture(url)
 
 
 if __name__ == "__main__":
