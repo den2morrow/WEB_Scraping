@@ -6,11 +6,11 @@ from typing import Iterator
 from concurrent.futures import ProcessPoolExecutor
 
 
-def fetch_url(main_url, url: str = None, count: int = 1) -> None:
+def fetch_url(url: str) -> None:
     try:
-        response = requests.get(main_url).text
+        response = requests.get(url).text
         soup = BeautifulSoup(response, 'lxml')
-        photos_on_one_url = [main_url[:-1] + photo_url.find('a').get('href') 
+        photos_on_one_url = [url[:-1] + photo_url.find('a').get('href') 
                             for photo_url in soup.find_all('div', class_='short_prev')]
         
         with open('./data/url_for_site_of_picture.txt', 'a') as file:
@@ -21,7 +21,7 @@ def fetch_url(main_url, url: str = None, count: int = 1) -> None:
         print(f'Error: {ex}')
 
 
-def get_all_urls(url_list) -> Iterator[None]:
+def get_all_urls(url_list: list[str]) -> Iterator[None]:
     with ProcessPoolExecutor() as executor:
         response = executor.map(fetch_url, url_list)
     return response
@@ -39,10 +39,6 @@ def main() -> None:
     get_all_urls(urls[:20])
     
     print('--' * 49 + '\nFinish writting urls...')
-
-        
-    
-    
     
 
 if __name__ == "__main__":

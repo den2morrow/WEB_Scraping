@@ -4,14 +4,13 @@ from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
 from threading import Thread
-# from concurrent.futures import ProcessPoolExecutor
 
 
 def get_all_download_urls() -> None:
     with open('./data/url_for_site_of_picture.txt', 'r') as file:
         urls = file.read().split('\n')
     
-    # Первый способ параллельного выполнения, который я пробовал
+
     thread_list = []
     for url in urls:
         try:
@@ -23,15 +22,9 @@ def get_all_download_urls() -> None:
     
     for th in thread_list:
         th.join()
-    
-    # Второй способ, параллельного выполнения, который я пробовал
-    # Пробовал и этот вариант, но ту же работу сделал в два раза медленнее
-    # with ProcessPoolExecutor() as executor:
-    #     response = executor.map(parse_url_for_download, urls)
-    
 
 
-def parse_url_for_download(url) -> None:
+def parse_url_for_download(url: str) -> None:
     response = requests.get(url)
     if response.status_code != 404:
         soup = BeautifulSoup(response.text, 'lxml')
@@ -44,7 +37,7 @@ def parse_url_for_download(url) -> None:
             file.write(download_url + '\n')
 
 
-def downloading_picture(url, name) -> None:
+def downloading_picture(url: str, name: str) -> None:
     headers = {
         'User-Agent': UserAgent().random
     }
