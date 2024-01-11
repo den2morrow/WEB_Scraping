@@ -20,12 +20,15 @@ def downloading_picture(url, name) -> None:
     headers = {
         'User-Agent': UserAgent().random
     }
-    response = requests.get(url, headers=headers)
-    if response.status_code != 404:
-        img = response.content
-        
-        with open(f'./data/imgs/{name}.jpg', 'wb') as file:
-            file.write(img)
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code != 404:
+            img = response.content
+            
+            with open(f'./data/imgs/{name}.jpg', 'wb') as file:
+                file.write(img)
+    except Exception as ex:
+        print(f'Error: {ex}')
 
 
 def main() -> None:
