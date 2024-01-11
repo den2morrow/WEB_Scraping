@@ -1,14 +1,18 @@
+from ast import parse
+from concurrent.futures import ProcessPoolExecutor
 from threading import Thread
 import time
+from xmlrpc.client import ResponseError
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
 
-def get_all_download_urls() -> list[str]:
+def get_all_download_urls() -> None:
     with open('./data/url_for_site_of_picture.txt', 'r') as file:
         urls = file.read().split('\n')
     
+    # Первый способ параллельного выполнения, который я пробовал
     thread_list = []
     for url in urls:
         try:
@@ -21,11 +25,11 @@ def get_all_download_urls() -> list[str]:
     for th in thread_list:
         th.join()
     
-    # Открываем файл с ссылками на скачивание, чтобы вернуть их из функции
-    with open('./data/download_urls.txt', 'r') as file:
-        download_urls = file.read().split('\n')
+    # Второй способ, параллельного выполнения, который я пробовал
+    # Пробовал и этот вариант, но ту же работу сделал в два раза медленнее
+    # with ProcessPoolExecutor() as executor:
+    #     response = executor.map(parse_url_for_download, urls)
     
-    return download_urls
 
 
 def parse_url_for_download(url) -> None:
